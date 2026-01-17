@@ -9,7 +9,7 @@ export const Hero: React.FC<HeroProps> = ({ scrollToSection }) => {
   return (
     <section
       id="home"
-      className="relative h-screen w-full overflow-hidden flex items-center justify-center text-center"
+      className="relative min-h-screen lg:min-h-[120vh] w-full overflow-hidden flex items-center justify-center text-center"
     >
       {/* Background */}
       <div className="absolute inset-0 z-0">
