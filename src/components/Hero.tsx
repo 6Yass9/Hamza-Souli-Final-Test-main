@@ -14,7 +14,7 @@ export const Hero: React.FC<HeroProps> = ({ scrollToSection }) => {
       {/* Background */}
       <div className="absolute inset-0 z-0">
         <img
-          src="/hero_background_picture.jpg"
+          src="/hero_background_picture.png"
           alt="Couple - Hamza Souli Weddings and Events"
           // Focus slightly above center so the couple + arch stay visible on wide screens
           className="w-full h-full object-cover object-[50%_50%]"
