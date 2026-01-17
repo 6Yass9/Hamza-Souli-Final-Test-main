@@ -17,7 +17,7 @@ export const Hero: React.FC<HeroProps> = ({ scrollToSection }) => {
           src="/hero_background_picture.jpg"
           alt="Couple - Hamza Souli Weddings and Events"
           // Focus slightly above center so the couple + arch stay visible on wide screens
-          className="w-full h-full object-cover object-[50%_70%]"
+          className="w-full h-full object-cover object-[50%_60%]"
         />
         {/* Lighter overlay to resemble the PDF (keep sky rich) */}
         <div className="absolute inset-0 bg-stone-900/20" />
