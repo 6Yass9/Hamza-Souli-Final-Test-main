@@ -6,6 +6,7 @@ import { Services } from './components/Services';
 import { Portfolio } from './components/Portfolio';
 import { Contact } from './components/Contact';
 import { Login } from './components/Login';
+import { About } from './components/About';
 
 // IMPORTANT:
 // Your file is: src/components/admindashboard.tsx
@@ -90,7 +91,8 @@ const App: React.FC = () => {
     { name: t('nav.home'), id: 'home' },
     { name: t('nav.portfolio'), id: 'portfolio' },
     { name: t('nav.services'), id: 'services' },
-    { name: t('nav.contact'), id: 'contact' }
+    { name: t('nav.contact'), id: 'contact' },
+    { name: t('nav.about'), id: 'about' }
   ];
 
   return (
@@ -101,21 +103,25 @@ const App: React.FC = () => {
           isScrolled ? 'bg-white/95 backdrop-blur-sm text-stone-800 shadow-sm py-4' : 'bg-transparent text-white py-6'
         }`}
       >
-        <div className="max-w-7xl mx-auto px-4 flex items-center">
-          <div
+        {/* ✅ IMPORTANT: justify-between to keep logo left and everything else right */}
+        <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
+          {/* LEFT: Logo */}
+          <button
+            type="button"
             className="cursor-pointer z-50 flex items-center"
             onClick={() => scrollToSection('home')}
+            aria-label="Retour à l'accueil"
           >
             <img
               src={isScrolled ? '/brand-logo-black.png' : '/brand-logo-white.png'}
               alt="Hamza Souli"
-              className={`h-10 md:h-12 w-auto transition-opacity ${isScrolled ? 'opacity-95' : 'opacity-100'}`}
+              className={`h-7 md:h-14 w-auto transition-opacity ${isScrolled ? 'opacity-95' : 'opacity-100'}`}
             />
-          </div>
+          </button>
 
-          {/* Desktop Menu */}
-          <div className="hidden md:flex gap-8 items-center ml-10">
-            {navLinks.map(link => (
+          {/* RIGHT: Desktop Menu */}
+          <div className="hidden md:flex items-center gap-8 ml-auto">
+            {navLinks.map((link) => (
               <button
                 key={link.id}
                 onClick={() => scrollToSection(link.id)}
@@ -132,7 +138,7 @@ const App: React.FC = () => {
 
             {/* Language Switch */}
             <div className="flex items-center gap-2 ml-2">
-              {(['en', 'fr', 'ar'] as const).map(lng => (
+              {(['en', 'fr', 'ar'] as const).map((lng) => (
                 <button
                   key={lng}
                   onClick={() => setLanguage(lng)}
@@ -153,19 +159,26 @@ const App: React.FC = () => {
 
             <button
               onClick={() => setView('login')}
-              className={`ml-2 p-2 rounded-full transition-colors ${isScrolled ? 'hover:bg-stone-100' : 'hover:bg-white/20'}`}
+              className={`ml-2 p-2 rounded-full transition-colors ${
+                isScrolled ? 'hover:bg-stone-100' : 'hover:bg-white/20'
+              }`}
               title={t('nav.clientLogin')}
+              aria-label={t('nav.clientLogin')}
             >
               <UserIcon size={20} />
             </button>
           </div>
 
-          {/* Mobile Menu Toggle */}
-          <div className="ml-auto flex md:hidden gap-4 items-center z-50">
-            <button onClick={() => setView('login')} className={mobileMenuOpen ? 'text-stone-900' : 'text-current'}>
+          {/* Mobile Menu Toggle (RIGHT side) */}
+          <div className="flex md:hidden gap-4 items-center z-50">
+            <button
+              onClick={() => setView('login')}
+              className={mobileMenuOpen ? 'text-stone-900' : 'text-current'}
+              aria-label={t('nav.clientLogin')}
+            >
               <UserIcon size={20} />
             </button>
-            <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+            <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} aria-label="Menu">
               {mobileMenuOpen ? <X size={24} className="text-stone-900" /> : <Menu size={24} />}
             </button>
           </div>
@@ -178,7 +191,7 @@ const App: React.FC = () => {
           mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
         } md:hidden flex flex-col justify-center items-center gap-8`}
       >
-        {navLinks.map(link => (
+        {navLinks.map((link) => (
           <button
             key={link.id}
             onClick={() => scrollToSection(link.id)}
@@ -189,7 +202,7 @@ const App: React.FC = () => {
         ))}
 
         <div className="flex items-center gap-3 mt-8">
-          {(['en', 'fr', 'ar'] as const).map(lng => (
+          {(['en', 'fr', 'ar'] as const).map((lng) => (
             <button
               key={lng}
               onClick={() => setLanguage(lng)}
@@ -204,8 +217,10 @@ const App: React.FC = () => {
       </div>
 
       <Hero scrollToSection={scrollToSection} />
-      <Services />
       <Portfolio />
+      <Services />
+      <About />
+
 
       {/* Divider */}
       <section className="py-20 bg-stone-900 text-stone-100 text-center px-4">
