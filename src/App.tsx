@@ -7,6 +7,7 @@ import { Portfolio } from './components/Portfolio';
 import { Contact } from './components/Contact';
 import { Login } from './components/Login';
 import { About } from './components/About';
+import { Reveal } from './components/Reveal';
 
 // IMPORTANT:
 // Your file is: src/components/admindashboard.tsx
@@ -216,9 +217,33 @@ const App: React.FC = () => {
       </div>
 
       <Hero scrollToSection={scrollToSection} />
-      <Portfolio />
-      <Services />
-      <About />
+
+<Reveal>
+  <Portfolio />
+</Reveal>
+
+<Reveal delayMs={80}>
+  <Services />
+</Reveal>
+
+<Reveal delayMs={120}>
+  <About />
+</Reveal>
+
+{/* Divider can also reveal */}
+<Reveal delayMs={160}>
+  <section className="py-20 bg-stone-900 text-stone-100 text-center px-4">
+    <div className="max-w-3xl mx-auto">
+      <p className="font-serif text-2xl md:text-3xl italic leading-relaxed mb-6"></p>
+      <p className="text-xs uppercase tracking-widest text-stone-400"></p>
+    </div>
+  </section>
+</Reveal>
+
+<Reveal delayMs={200}>
+  <Contact />
+</Reveal>
+
 
 
       {/* Divider */}
