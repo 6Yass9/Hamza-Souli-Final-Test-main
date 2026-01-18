@@ -9,18 +9,17 @@ export const Hero: React.FC<HeroProps> = ({ scrollToSection }) => {
   return (
     <section
       id="home"
-      className="relative min-h-screen lg:min-h-[150vh] w-full overflow-hidden"
+      className="relative min-h-screen lg:min-h-[200vh] w-full overflow-hidden"
     >
       {/* Background */}
       <div className="absolute inset-0 z-0">
         <img
-          src="/hero_background_picture.png"
+          src="/hero_background_picture.jpg"
           alt="Couple - Hamza Souli Weddings and Events"
           className="
             w-full h-full
             object-cover
             object-[50%_70%]
-            scale-95
             transition-transform
           "
         />
