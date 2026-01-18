@@ -92,7 +92,6 @@ const App: React.FC = () => {
     { name: t('nav.portfolio'), id: 'portfolio' },
     { name: t('nav.services'), id: 'services' },
     { name: t('nav.contact'), id: 'contact' },
-    { name: t('nav.about'), id: 'about' }
   ];
 
   return (
