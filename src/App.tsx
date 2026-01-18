@@ -101,7 +101,7 @@ const App: React.FC = () => {
           isScrolled ? 'bg-white/95 backdrop-blur-sm text-stone-800 shadow-sm py-4' : 'bg-transparent text-white py-6'
         }`}
       >
-        <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
+        <div className="max-w-7xl mx-auto px-4 flex items-center">
           <div
             className="cursor-pointer z-50 flex items-center"
             onClick={() => scrollToSection('home')}
@@ -109,12 +109,12 @@ const App: React.FC = () => {
             <img
               src={isScrolled ? '/brand-logo-black.png' : '/brand-logo-white.png'}
               alt="Hamza Souli"
-              className={`h-7 md:h-8 w-auto transition-opacity ${isScrolled ? 'opacity-95' : 'opacity-100'}`}
+              className={`h-10 md:h-12 w-auto transition-opacity ${isScrolled ? 'opacity-95' : 'opacity-100'}`}
             />
           </div>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex gap-8 items-center">
+          <div className="hidden md:flex gap-8 items-center ml-10">
             {navLinks.map(link => (
               <button
                 key={link.id}
@@ -161,7 +161,7 @@ const App: React.FC = () => {
           </div>
 
           {/* Mobile Menu Toggle */}
-          <div className="flex md:hidden gap-4 items-center z-50">
+          <div className="ml-auto flex md:hidden gap-4 items-center z-50">
             <button onClick={() => setView('login')} className={mobileMenuOpen ? 'text-stone-900' : 'text-current'}>
               <UserIcon size={20} />
             </button>

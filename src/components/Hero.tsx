@@ -9,7 +9,7 @@ export const Hero: React.FC<HeroProps> = ({ scrollToSection }) => {
   return (
     <section
       id="home"
-      className="relative min-h-screen lg:min-h-[200vh] w-full overflow-hidden"
+      className="relative min-h-screen lg:min-h-[150vh] w-full overflow-hidden"
     >
       {/* Background */}
       <div className="absolute inset-0 z-0">
@@ -20,6 +20,7 @@ export const Hero: React.FC<HeroProps> = ({ scrollToSection }) => {
             w-full h-full
             object-cover
             object-[50%_70%]
+            scale-95
             transition-transform
           "
         />
@@ -61,14 +62,13 @@ export const Hero: React.FC<HeroProps> = ({ scrollToSection }) => {
           </div>
         </div>
 
-        {/* Name */}
-        <div className="mt-12">
-          <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl tracking-[0.18em]">
-            HAMZA SOULI
-          </h1>
-          <p className="mt-3 font-sans text-[10px] tracking-[0.45em] uppercase text-white/85">
-            WEDDINGS AND EVENTS PHOTOGRAPHER
-          </p>
+        {/* Brand logo (replaces the old text line) */}
+        <div className="mt-12 flex flex-col items-center">
+          <img
+            src="/brand-logo-white.png"
+            alt="Hamza Souli — Weddings and Events Photographer"
+            className="h-12 sm:h-14 md:h-16 lg:h-20 w-auto opacity-95"
+          />
         </div>
 
         {/* CTA */}
