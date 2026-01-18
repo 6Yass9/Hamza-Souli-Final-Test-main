@@ -103,10 +103,14 @@ const App: React.FC = () => {
       >
         <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
           <div
-            className="font-serif text-2xl md:text-3xl tracking-wide cursor-pointer z-50"
+            className="cursor-pointer z-50 flex items-center"
             onClick={() => scrollToSection('home')}
           >
-            HAMZA SOULI
+            <img
+              src={isScrolled ? '/brand-logo-black.png' : '/brand-logo-white.png'}
+              alt="Hamza Souli"
+              className={`h-7 md:h-8 w-auto transition-opacity ${isScrolled ? 'opacity-95' : 'opacity-100'}`}
+            />
           </div>
 
           {/* Desktop Menu */}

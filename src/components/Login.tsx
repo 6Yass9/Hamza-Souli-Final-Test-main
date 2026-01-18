@@ -62,8 +62,8 @@ export const Login: React.FC<LoginProps> = ({ onLogin, onBack }) => {
           {t('login.close')}
         </button>
 
-        <div className="text-center mb-8">
-          <h2 className="font-serif text-4xl text-stone-900 mb-2">{t('login.brand')}</h2>
+        <div className="text-center mb-8 flex flex-col items-center">
+          <img src="/brand-logo-black.png" alt="Hamza Souli" className="h-12 w-auto mb-3" />
           <p className="text-xs uppercase tracking-[0.2em] text-stone-500">
             {t('login.unified.subtitle')}
           </p>

@@ -124,12 +124,12 @@ export const ClientDashboard: React.FC<ClientDashboardProps> = ({ user, onLogout
   return (
     <div className="min-h-screen bg-stone-50">
       <header className="bg-white border-b border-stone-200 px-8 py-4 flex justify-between items-center sticky top-0 z-30">
-        <h1 className="font-serif text-2xl text-stone-900">
-          {t('login.brand')}{' '}
-          <span className="text-stone-400 font-sans text-xs uppercase tracking-wide ml-2">
+        <div className="flex items-center gap-4">
+          <img src="/brand-logo-black.png" alt="Hamza Souli" className="h-8 w-auto" />
+          <span className="text-stone-400 font-sans text-xs uppercase tracking-wide">
             {t('login.clientPortal')}
           </span>
-        </h1>
+        </div>
         <div className="flex items-center gap-4">
           <span className="text-sm text-stone-600 hidden md:inline">
             {t('client.welcome', { name: user.name })}

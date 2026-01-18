@@ -109,7 +109,7 @@ export const StaffDashboard: React.FC<StaffDashboardProps> = ({ user, onDéconne
       {/* Header (match admin sidebar tone) */}
       <header className="bg-stone-900 text-stone-100 px-8 py-4 flex justify-between items-center sticky top-0 z-30 shadow-sm">
         <div className="flex items-center gap-4">
-          <img src="/logo.png" alt="Hamza Souli" className="h-6 w-auto" />
+          <img src="/brand-logo-black.png" alt="Hamza Souli" className="h-7 w-auto" />
           <span className="font-sans text-xs uppercase tracking-wide border-l border-stone-700/70 pl-4 text-stone-200">
             Espace Staff
           </span>

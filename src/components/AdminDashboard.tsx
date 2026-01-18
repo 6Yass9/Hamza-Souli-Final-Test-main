@@ -447,9 +447,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
       {/* Sidebar */}
       <aside className={`${isSidebarCollapsed ? 'w-20' : 'w-64'} bg-stone-900 text-stone-400 flex flex-col fixed h-full z-10 overflow-y-auto transition-all duration-200`}>
         <div className="p-6 flex items-center justify-between gap-3">
-          <h1 className="font-serif text-2xl text-white whitespace-nowrap overflow-hidden">
-            {isSidebarCollapsed ? 'HS' : t('admin.sidebar.title')}
-          </h1>
+          <div className="flex items-center">
+            <img
+              src="/brand-logo-white.png"
+              alt="Hamza Souli"
+              className={`${isSidebarCollapsed ? 'h-6' : 'h-8'} w-auto max-w-[170px]`}
+            />
+          </div>
           <button
             onClick={() => setIsSidebarCollapsed(v => !v)}
             className="text-stone-400 hover:text-white border border-stone-700 hover:border-stone-500 rounded px-2 py-1 text-xs uppercase tracking-widest"
