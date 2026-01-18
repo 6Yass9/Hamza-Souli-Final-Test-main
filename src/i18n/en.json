@@ -60,6 +60,12 @@
     "viewFull": "View Full Gallery",
     "showLess": "Show Less"
   },
+  
+  "about": {
+    "kicker": "About",
+    "title": "Hamza Souli Weddings & Events",
+    "description": "Hamza Souli is a weddings and events photographer capturing authentic love stories through an elegant, natural and timeless approach. Specialized in wedding and event photography, each image is crafted to reflect emotion, beauty and the uniqueness of every moment."
+  },
   "contact": {
     "tabs": {
       "message": "Inquire",
