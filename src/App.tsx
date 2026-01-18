@@ -113,12 +113,12 @@ const App: React.FC = () => {
             <img
               src={isScrolled ? '/brand-logo-black.png' : '/brand-logo-white.png'}
               alt="Hamza Souli"
-              className={`h-12 md:h-14 w-auto transition-opacity ${isScrolled ? 'opacity-95' : 'opacity-100'}`}
+              className={`h-7 md:h-14 w-auto transition-opacity ${isScrolled ? 'opacity-95' : 'opacity-100'}`}
             />
           </button>
 
           {/* RIGHT: Desktop Menu */}
-          <div className="hidden md:flex items-center gap-8">
+          <div className="hidden md:flex items-center gap-8 ml-auto">
             {navLinks.map((link) => (
               <button
                 key={link.id}
