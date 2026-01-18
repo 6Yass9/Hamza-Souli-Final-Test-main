@@ -20,7 +20,6 @@ export const Hero: React.FC<HeroProps> = ({ scrollToSection }) => {
             w-full h-full
             object-cover
             object-[50%_70%]
-            scale-95
             transition-transform
           "
         />
