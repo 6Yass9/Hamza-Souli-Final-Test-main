@@ -78,7 +78,10 @@ export const Hero: React.FC<HeroProps> = ({ scrollToSection }) => {
           <div className="mt-12">
             {/* Replace photographer line with logo (white version for dark hero) */}
             <div className="mt-4 flex justify-center">
-              <img src="/brand-logo-white.png" alt="Hamza Souli" className="h-10 md:h-12 w-auto opacity-95" />
+              <img src="/brand-logo-white.png" 
+              alt="Hamza Souli" 
+              className="h-10 md:h-20 w-auto opacity-95" 
+              />
             </div>
           </div>
 
