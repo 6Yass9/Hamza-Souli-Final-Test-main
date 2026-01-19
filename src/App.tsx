@@ -92,7 +92,7 @@ const App: React.FC = () => {
     { name: t('nav.home'), id: 'home' },
     { name: t('nav.portfolio'), id: 'portfolio' },
     { name: t('nav.services'), id: 'services' },
-    { name: t('nav.contact'), id: 'contact' },
+    { name: t('nav.contact'), id: 'contact' }
   ];
 
   return (
@@ -103,7 +103,6 @@ const App: React.FC = () => {
           isScrolled ? 'bg-white/95 backdrop-blur-sm text-stone-800 shadow-sm py-4' : 'bg-transparent text-white py-6'
         }`}
       >
-        {/* ✅ IMPORTANT: justify-between to keep logo left and everything else right */}
         <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
           {/* LEFT: Logo */}
           <button
@@ -115,7 +114,7 @@ const App: React.FC = () => {
             <img
               src={isScrolled ? '/brand-logo-black.png' : '/brand-logo-white.png'}
               alt="Hamza Souli"
-              className={`h-7 md:h-14 w-auto transition-opacity ${isScrolled ? 'opacity-95' : 'opacity-100'}`}
+              className={`h-12 md:h-14 w-auto transition-opacity ${isScrolled ? 'opacity-95' : 'opacity-100'}`}
             />
           </button>
 
@@ -159,9 +158,7 @@ const App: React.FC = () => {
 
             <button
               onClick={() => setView('login')}
-              className={`ml-2 p-2 rounded-full transition-colors ${
-                isScrolled ? 'hover:bg-stone-100' : 'hover:bg-white/20'
-              }`}
+              className={`ml-2 p-2 rounded-full transition-colors ${isScrolled ? 'hover:bg-stone-100' : 'hover:bg-white/20'}`}
               title={t('nav.clientLogin')}
               aria-label={t('nav.clientLogin')}
             >
@@ -169,7 +166,7 @@ const App: React.FC = () => {
             </button>
           </div>
 
-          {/* Mobile Menu Toggle (RIGHT side) */}
+          {/* Mobile Menu Toggle */}
           <div className="flex md:hidden gap-4 items-center z-50">
             <button
               onClick={() => setView('login')}
@@ -218,43 +215,30 @@ const App: React.FC = () => {
 
       <Hero scrollToSection={scrollToSection} />
 
-<Reveal>
-  <Portfolio />
-</Reveal>
+      <Reveal>
+        <Portfolio />
+      </Reveal>
 
-<Reveal delayMs={80}>
-  <Services />
-</Reveal>
+      <Reveal delayMs={80}>
+        <Services />
+      </Reveal>
 
-<Reveal delayMs={120}>
-  <About />
-</Reveal>
+      <Reveal delayMs={120}>
+        <About />
+      </Reveal>
 
-{/* Divider can also reveal */}
-<Reveal delayMs={160}>
-  <section className="py-20 bg-stone-900 text-stone-100 text-center px-4">
-    <div className="max-w-3xl mx-auto">
-      <p className="font-serif text-2xl md:text-3xl italic leading-relaxed mb-6"></p>
-      <p className="text-xs uppercase tracking-widest text-stone-400"></p>
-    </div>
-  </section>
-</Reveal>
+      <Reveal delayMs={160}>
+        <section className="py-20 bg-stone-900 text-stone-100 text-center px-4">
+          <div className="max-w-3xl mx-auto">
+            <p className="font-serif text-2xl md:text-3xl italic leading-relaxed mb-6"></p>
+            <p className="text-xs uppercase tracking-widest text-stone-400"></p>
+          </div>
+        </section>
+      </Reveal>
 
-<Reveal delayMs={200}>
-  <Contact />
-</Reveal>
-
-
-
-      {/* Divider */}
-      <section className="py-20 bg-stone-900 text-stone-100 text-center px-4">
-        <div className="max-w-3xl mx-auto">
-          <p className="font-serif text-2xl md:text-3xl italic leading-relaxed mb-6"></p>
-          <p className="text-xs uppercase tracking-widest text-stone-400"></p>
-        </div>
-      </section>
-
-      <Contact />
+      <Reveal delayMs={200}>
+        <Contact />
+      </Reveal>
 
       <footer className="bg-stone-900 text-stone-400 py-12 px-6 border-t border-stone-800">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">

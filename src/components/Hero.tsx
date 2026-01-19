@@ -35,7 +35,10 @@ export const Hero: React.FC<HeroProps> = ({ scrollToSection }) => {
         <img
           src="/hero_background_picture.jpg"
           alt="Couple - Hamza Souli Weddings and Events"
-          className="w-full h-full object-cover object-[50%_70%] scale-95"
+          className="w-full h-full
+            object-cover
+            object-[50%_70%]
+            transition-transform"
         />
         <div className="absolute inset-0 bg-stone-900/20" />
       </div>
