@@ -29,7 +29,7 @@ export const Hero: React.FC<HeroProps> = ({ scrollToSection }) => {
   }, []);
 
   return (
-    <section id="home" className="relative min-h-screen lg:min-h-[150vh] w-full overflow-hidden">
+    <section id="home" className="relative min-h-screen lg:min-h-[210vh] w-full overflow-hidden">
       {/* Background */}
       <div className="absolute inset-0 z-0">
         <img
@@ -76,10 +76,6 @@ export const Hero: React.FC<HeroProps> = ({ scrollToSection }) => {
           </div>
 
           <div className="mt-12">
-            <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl tracking-[0.18em]">
-              HAMZA SOULI
-            </h1>
-
             {/* Replace photographer line with logo (white version for dark hero) */}
             <div className="mt-4 flex justify-center">
               <img src="/brand-logo-white.png" alt="Hamza Souli" className="h-10 md:h-12 w-auto opacity-95" />
