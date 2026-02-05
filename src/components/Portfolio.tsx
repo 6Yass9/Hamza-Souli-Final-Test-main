@@ -1,175 +1,210 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { GalleryItem } from '../types';
-import { api } from '../services/api';
-import { X, ChevronLeft, ChevronRight, Maximize2 } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
-export const Portfolio: React.FC = () => {
+interface Props {
+  items: GalleryItem[];
+}
+
+type Filter = 'all' | 'photos' | 'videos';
+
+const isVideoItem = (item: GalleryItem) => {
+  if (item.mediaType === 'video') return true;
+  if (item.mimeType?.startsWith('video/')) return true;
+
+  // Fallback: infer from URL extension (works for public URLs)
+  const url = (item.url || '').toLowerCase().split('?')[0];
+  return (
+    url.endsWith('.mp4') ||
+    url.endsWith('.webm') ||
+    url.endsWith('.mov') ||
+    url.endsWith('.m4v') ||
+    url.endsWith('.avi')
+  );
+};
+
+export const Portfolio: React.FC<Props> = ({ items }) => {
   const { t } = useTranslation();
 
-  const [items, setItems] = useState<GalleryItem[]>([]);
-  const [isFullView, setIsFullView] = useState(false);
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [filter, setFilter] = useState<Filter>('all');
 
+  // Simple fade/slide animation when switching filters
+  const [visible, setVisible] = useState(true);
   useEffect(() => {
-    const fetchPortfolio = async () => {
-      try {
-        const photos = await api.getPublicPhotos();
-        setItems(photos);
-      } catch (e) {
-        console.error('Failed to load public portfolio photos', e);
-        setItems([]);
-      }
-    };
-    fetchPortfolio();
-  }, []);
+    setVisible(false);
+    const id = window.setTimeout(() => setVisible(true), 80);
+    return () => window.clearTimeout(id);
+  }, [filter]);
 
-  const displayItems = useMemo(
-    () => (isFullView ? items : items.slice(0, 6)),
-    [isFullView, items]
-  );
+  const filtered = useMemo(() => {
+    if (filter === 'photos') return items.filter((i) => !isVideoItem(i));
+    if (filter === 'videos') return items.filter((i) => isVideoItem(i));
+    return items;
+  }, [items, filter]);
 
-  const selectedIndex = useMemo(() => {
-    if (!selectedId) return null;
-    const idx = items.findIndex(p => p.id === selectedId);
-    return idx >= 0 ? idx : null;
-  }, [items, selectedId]);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(0);
 
-  const openLightbox = (id: string) => setSelectedId(id);
-  const closeLightbox = () => setSelectedId(null);
-
-  const nextImage = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (selectedIndex === null || items.length === 0) return;
-    const next = (selectedIndex + 1) % items.length;
-    setSelectedId(items[next].id);
+  const openLightbox = (index: number) => {
+    setActiveIndex(index);
+    setLightboxOpen(true);
   };
 
-  const prevImage = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (selectedIndex === null || items.length === 0) return;
-    const prev = (selectedIndex - 1 + items.length) % items.length;
-    setSelectedId(items[prev].id);
+  const closeLightbox = () => setLightboxOpen(false);
+
+  const prev = () => setActiveIndex((i) => (i - 1 + filtered.length) % filtered.length);
+  const next = () => setActiveIndex((i) => (i + 1) % filtered.length);
+
+  const activeItem = filtered[activeIndex];
+
+  const FilterButton = ({ value, label }: { value: Filter; label: string }) => {
+    const active = filter === value;
+    return (
+      <button
+        type="button"
+        onClick={() => setFilter(value)}
+        className={`relative px-4 py-2 text-xs uppercase tracking-[0.2em] transition-colors ${
+          active ? 'text-stone-900' : 'text-stone-500 hover:text-stone-700'
+        }`}
+        aria-pressed={active}
+      >
+        {label}
+        <span
+          className={`absolute left-0 right-0 -bottom-[2px] h-[2px] bg-stone-900 transition-transform duration-300 origin-left ${
+            active ? 'scale-x-100' : 'scale-x-0'
+          }`}
+        />
+      </button>
+    );
   };
 
   return (
-    <section id="portfolio" className="py-24 bg-stone-50 px-4 md:px-8 relative">
-      <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-16">
-          <h3 className="font-serif text-4xl md:text-5xl text-stone-900 mb-4">{t('portfolio.title')}</h3>
-          <p className="text-stone-500 font-light max-w-2xl mx-auto">
-            {t('portfolio.subtitle')}
+    <section id="portfolio" className="py-24 bg-stone-100 px-4">
+      <div className="max-w-6xl mx-auto">
+        <div className="text-center max-w-2xl mx-auto mb-10">
+          <span className="text-xs font-bold tracking-[0.2em] text-stone-500 uppercase">
+            {t('portfolio.badge', { defaultValue: 'Portfolio' })}
+          </span>
+          <h3 className="font-serif text-4xl md:text-5xl text-stone-900 mt-4 mb-6">
+            {t('portfolio.title', { defaultValue: 'Our Work' })}
+          </h3>
+          <p className="text-stone-600 font-light leading-relaxed">
+            {t('portfolio.subtitle', { defaultValue: 'Browse photos and videos from our recent projects.' })}
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
-          {displayItems.map(item => (
-            <div
-              key={item.id}
-              onClick={() => openLightbox(item.id)}
-              className="group relative aspect-[3/4] overflow-hidden bg-stone-200 cursor-pointer"
-            >
-              {
-              item.mediaType === 'video' || (item.mimeType?.startsWith('video/') ?? false) ? (
-                <video
-                  src={item.url}
-                  className="w-full h-full object-cover"
-                  muted
-                  playsInline
-                  preload="metadata"
-                />
-              ) : (
-                <img
-                  src={item.url}
-                  alt={item.title}
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                />
-              )
-            }
-              <div className="absolute inset-0 bg-stone-900/0 group-hover:bg-stone-900/20 transition-colors duration-500 flex items-center justify-center">
-                <span className="text-white opacity-0 group-hover:opacity-100 font-serif tracking-wide transition-opacity duration-300 flex items-center gap-2">
-                  <Maximize2 size={16} /> {t('portfolio.view')}
-                </span>
-              </div>
-            </div>
-          ))}
-
-          {items.length === 0 && (
-            <div className="col-span-full text-center py-12 text-stone-400">
-              {t('portfolio.empty')}
-            </div>
-          )}
+        {/* Animated filter controls */}
+        <div className="flex items-center justify-center mb-10">
+          <div className="inline-flex border-b border-stone-200">
+            <FilterButton value="all" label={t('portfolio.filters.all', { defaultValue: 'All' })} />
+            <FilterButton value="photos" label={t('portfolio.filters.photos', { defaultValue: 'Photos' })} />
+            <FilterButton value="videos" label={t('portfolio.filters.videos', { defaultValue: 'Videos' })} />
+          </div>
         </div>
 
-        <div className="text-center mt-12">
-          {items.length > 6 && !isFullView && (
-            <button
-              onClick={() => setIsFullView(true)}
-              className="inline-block border-b border-stone-800 pb-1 text-stone-800 hover:text-stone-500 transition-colors uppercase tracking-widest text-xs"
-            >
-              {t('portfolio.viewFull')}
-            </button>
-          )}
-          {isFullView && (
-            <button
-              onClick={() => setIsFullView(false)}
-              className="inline-block border-b border-stone-800 pb-1 text-stone-800 hover:text-stone-500 transition-colors uppercase tracking-widest text-xs"
-            >
-              {t('portfolio.showLess')}
-            </button>
-          )}
-        </div>
+        {/* Grid (animates on filter change) */}
+        {filtered.length === 0 ? (
+          <div className="text-center text-stone-500 text-sm italic border-2 border-dashed border-stone-200 rounded p-10">
+            {t('portfolio.empty', { defaultValue: 'No media to show yet.' })}
+          </div>
+        ) : (
+          <div
+            className={`grid grid-cols-2 md:grid-cols-4 gap-4 transition-all duration-300 ease-out ${
+              visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
+            }`}
+          >
+            {filtered.map((item, i) => {
+              const isVideo = isVideoItem(item);
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => openLightbox(i)}
+                  className="group relative overflow-hidden bg-stone-200 aspect-[3/4] focus:outline-none"
+                  aria-label={item.title || (isVideo ? 'Video' : 'Image')}
+                >
+                  {isVideo ? (
+                    <video
+                      src={item.url}
+                      className="w-full h-full object-cover"
+                      muted
+                      playsInline
+                      preload="metadata"
+                    />
+                  ) : (
+                    <img
+                      src={item.url}
+                      alt={item.title || 'Portfolio item'}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      loading="lazy"
+                    />
+                  )}
+
+                  <div className="absolute inset-0 bg-stone-900/35 opacity-0 group-hover:opacity-100 transition-opacity" />
+
+                  {isVideo && (
+                    <div className="absolute bottom-3 right-3 bg-black/60 text-white text-[10px] px-2 py-1 uppercase tracking-widest">
+                      {t('portfolio.videoTag', { defaultValue: 'Video' })}
+                    </div>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        )}
       </div>
 
-      {selectedIndex !== null && items[selectedIndex] && (
-        <div
-          className="fixed inset-0 z-50 bg-stone-900/95 flex items-center justify-center backdrop-blur-sm animate-fade-in"
-          onClick={closeLightbox}
-        >
+      {/* Lightbox */}
+      {lightboxOpen && activeItem && (
+        <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-50">
           <button
-            className="absolute top-4 right-4 text-white/50 hover:text-white transition-colors"
+            type="button"
+            className="absolute top-6 right-6 text-white hover:opacity-80"
             onClick={closeLightbox}
+            aria-label="Close"
           >
-            <X size={32} strokeWidth={1} />
+            <X size={32} />
           </button>
 
-          <button
-            className="absolute left-4 text-white/50 hover:text-white transition-colors p-4 hidden md:block"
-            onClick={prevImage}
-          >
-            <ChevronLeft size={48} strokeWidth={1} />
-          </button>
+          {filtered.length > 1 && (
+            <>
+              <button
+                type="button"
+                className="absolute left-4 md:left-10 text-white hover:opacity-80"
+                onClick={prev}
+                aria-label="Previous"
+              >
+                <ChevronLeft size={36} />
+              </button>
+              <button
+                type="button"
+                className="absolute right-4 md:right-10 text-white hover:opacity-80"
+                onClick={next}
+                aria-label="Next"
+              >
+                <ChevronRight size={36} />
+              </button>
+            </>
+          )}
 
-          <div className="max-w-5xl max-h-[85vh] p-4 relative" onClick={e => e.stopPropagation()}>
-            {
-              items[selectedIndex].mediaType === 'video' ||
-              (items[selectedIndex].mimeType?.startsWith('video/') ?? false) ? (
-                <video
-                  src={items[selectedIndex].url}
-                  className="max-h-[85vh] w-auto max-w-full object-contain shadow-2xl"
-                  controls
-                  playsInline
-                  autoPlay
-                />
-              ) : (
-                <img
-                  src={items[selectedIndex].url}
-                  alt={items[selectedIndex].title}
-                  className="max-h-[85vh] w-auto max-w-full object-contain shadow-2xl"
-                />
-              )
-            }
-            <div className="text-center mt-4 text-white/80 font-serif tracking-wide">
-              {items[selectedIndex].title}
-            </div>
+          <div className="max-w-[95vw] max-h-[85vh]">
+            {isVideoItem(activeItem) ? (
+              <video
+                src={activeItem.url}
+                controls
+                autoPlay
+                playsInline
+                className="max-h-[85vh] w-auto max-w-full object-contain shadow-2xl"
+              />
+            ) : (
+              <img
+                src={activeItem.url}
+                alt={activeItem.title || 'Portfolio item'}
+                className="max-h-[85vh] w-auto max-w-full object-contain shadow-2xl"
+              />
+            )}
           </div>
-
-          <button
-            className="absolute right-4 text-white/50 hover:text-white transition-colors p-4 hidden md:block"
-            onClick={nextImage}
-          >
-            <ChevronRight size={48} strokeWidth={1} />
-          </button>
         </div>
       )}
     </section>
