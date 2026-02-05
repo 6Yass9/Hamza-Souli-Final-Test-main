@@ -243,21 +243,23 @@ export const ClientDashboard: React.FC<ClientDashboardProps> = ({ user, onLogout
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {galleryItems.map((item) => (
                   <div key={item.id} className="group relative aspect-[3/4] bg-stone-200 overflow-hidden">
-                    {item.mediaType === 'video' || (item.mimeType?.startsWith('video/') ?? false) ? (
-                      <video
-                        src={item.url}
-                        className="w-full h-full object-cover"
-                        controls
-                        playsInline
-                        preload="metadata"
-                      />
-                    ) : (
-                      <img
-                        src={item.url}
-                        alt={item.title}
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                      />
-                    )}
+                    {
+                      item.mediaType === 'video' || (item.mimeType?.startsWith('video/') ?? false) ? (
+                        <video
+                          src={item.url}
+                          className="w-full h-full object-cover"
+                          controls
+                          playsInline
+                          preload="metadata"
+                        />
+                      ) : (
+                        <img
+                          src={item.url}
+                          alt={item.title}
+                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                        />
+                      )
+                    }
                     <div className="absolute inset-0 bg-stone-900/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                       <button
                         type="button"

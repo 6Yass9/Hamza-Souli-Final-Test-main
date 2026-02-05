@@ -398,7 +398,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
 
     for (const file of files) {
       try {
-        // Upload to Supabase Storage (bucket: "media") and create gallery item
         await api.addGalleryMediaFile(activeAlbum.id, file, file.name.split('.')[0]);
       } catch (err) {
         console.error('Failed to upload file', file.name, err);
@@ -1204,7 +1203,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                       <video
                         src={item.url}
                         className="w-full h-full object-cover"
-                        muted
+                        controls
                         playsInline
                         preload="metadata"
                       />

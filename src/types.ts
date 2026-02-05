@@ -70,7 +70,7 @@ export interface GalleryItem {
   title: string;
   albumId?: string;
 
-  // NEW: media support (images + videos)
+  // Media support
   mediaType?: 'image' | 'video';
   mimeType?: string | null;
   storagePath?: string | null;
