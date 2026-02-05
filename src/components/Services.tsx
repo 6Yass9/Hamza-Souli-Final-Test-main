@@ -9,16 +9,59 @@ export const Services: React.FC = () => {
   const businessPhone = (import.meta as any).env?.VITE_WHATSAPP_BUSINESS_PHONE as string | undefined;
 
   const openWhatsApp = (message: string) => {
-    // click-to-chat: sends from the client's WhatsApp account (client number)
+    // Click-to-chat: opens WhatsApp with a prefilled message
     if (!businessPhone) {
       alert(
         "VITE_WHATSAPP_BUSINESS_PHONE n'est pas configuré. Ajoutez-le dans vos variables d'environnement Vite (.env / Vercel)."
       );
       return;
     }
+
+    // wa.me expects digits only (no +, spaces)
     const cleaned = businessPhone.replace(/\s+/g, '').replace(/^\+/, '');
     const url = `https://wa.me/${cleaned}?text=${encodeURIComponent(message)}`;
     window.open(url, '_blank', 'noopener,noreferrer');
+  };
+
+  const buildInquiryTemplate = (pkgId: string, pkgTitle: string) => {
+    // Templates are pre-filled so the client can just hit "send" (or edit).
+    // Localize them in i18n JSON under: services.inquiryTemplates.*
+    switch (pkgId) {
+      case 'photo':
+        return t('services.inquiryTemplates.photo', {
+          pack: pkgTitle,
+          defaultValue:
+            "Bonjour, je souhaite des informations sur le {{pack}}.\n" +
+            "• Date de l’événement : [JJ/MM/AAAA]\n" +
+            "• Lieu : [Ville]\n" +
+            "• Type d’événement : [Mariage / Fiançailles / Autre]\n" +
+            "Merci !"
+        });
+
+      case 'photo-video':
+        return t('services.inquiryTemplates.photoVideo', {
+          pack: pkgTitle,
+          defaultValue:
+            "Bonjour, je souhaite des informations sur le {{pack}}.\n" +
+            "• Date de l’événement : [JJ/MM/AAAA]\n" +
+            "• Lieu : [Ville]\n" +
+            "• Durée estimée : [Heures]\n" +
+            "• Souhaitez-vous un trailer : [Oui / Non]\n" +
+            "Merci !"
+        });
+
+      default:
+        // Extras / other options
+        return t('services.inquiryTemplates.extras', {
+          pack: pkgTitle,
+          defaultValue:
+            "Bonjour, je souhaite des informations sur {{pack}}.\n" +
+            "Je suis intéressé(e) par : [Séance extérieure / Reel / Préparatifs / Livre photo / Autre]\n" +
+            "• Date de l’événement : [JJ/MM/AAAA]\n" +
+            "• Lieu : [Ville]\n" +
+            "Merci !"
+        });
+    }
   };
 
   const PACKAGES: ServicePackage[] = [
@@ -52,9 +95,7 @@ export const Services: React.FC = () => {
           <h3 className="font-serif text-4xl md:text-5xl text-stone-900 mt-4 mb-6">
             {t('services.title')}
           </h3>
-          <p className="text-stone-600 font-light leading-relaxed">
-            {t('services.subtitle')}
-          </p>
+          <p className="text-stone-600 font-light leading-relaxed">{t('services.subtitle')}</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -73,9 +114,7 @@ export const Services: React.FC = () => {
 
               <h4 className="font-serif text-2xl mb-4">{pkg.title}</h4>
 
-              <p className="text-stone-500 text-sm mb-8 leading-relaxed px-4">
-                {pkg.description}
-              </p>
+              <p className="text-stone-500 text-sm mb-8 leading-relaxed px-4">{pkg.description}</p>
 
               <ul className="space-y-3 mb-10 flex-grow">
                 {pkg.features.map((feature, i) => (
@@ -91,9 +130,7 @@ export const Services: React.FC = () => {
 
               <button
                 onClick={() => {
-                  const msg =
-                    `Bonjour, je souhaite demander des informations sur l'offre : ${pkg.title}. ` +
-                    `Pouvez-vous me donner les détails et la disponibilité, s'il vous plaît ?`;
+                  const msg = buildInquiryTemplate(pkg.id, pkg.title);
                   openWhatsApp(msg);
                 }}
                 className={`px-6 py-2 text-sm uppercase tracking-wider transition-colors ${
