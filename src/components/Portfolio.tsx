@@ -69,11 +69,21 @@ export const Portfolio: React.FC = () => {
               onClick={() => openLightbox(item.id)}
               className="group relative aspect-[3/4] overflow-hidden bg-stone-200 cursor-pointer"
             >
-              <img
-                src={item.url}
-                alt={item.title}
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-              />
+              {item.mediaType === 'video' || (item.mimeType?.startsWith('video/') ?? false) ? (
+                <video
+                  src={item.url}
+                  className="w-full h-full object-cover"
+                  muted
+                  playsInline
+                  preload="metadata"
+                />
+              ) : (
+                <img
+                  src={item.url}
+                  alt={item.title}
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+              )}
               <div className="absolute inset-0 bg-stone-900/0 group-hover:bg-stone-900/20 transition-colors duration-500 flex items-center justify-center">
                 <span className="text-white opacity-0 group-hover:opacity-100 font-serif tracking-wide transition-opacity duration-300 flex items-center gap-2">
                   <Maximize2 size={16} /> {t('portfolio.view')}
@@ -129,11 +139,21 @@ export const Portfolio: React.FC = () => {
           </button>
 
           <div className="max-w-5xl max-h-[85vh] p-4 relative" onClick={e => e.stopPropagation()}>
-            <img
-              src={items[selectedIndex].url}
-              alt={items[selectedIndex].title}
-              className="max-h-[85vh] w-auto max-w-full object-contain shadow-2xl"
-            />
+            {items[selectedIndex].mediaType === 'video' || (items[selectedIndex].mimeType?.startsWith('video/') ?? false) ? (
+              <video
+                src={items[selectedIndex].url}
+                className="max-h-[85vh] w-auto max-w-full object-contain shadow-2xl"
+                controls
+                playsInline
+                autoPlay
+              />
+            ) : (
+              <img
+                src={items[selectedIndex].url}
+                alt={items[selectedIndex].title}
+                className="max-h-[85vh] w-auto max-w-full object-contain shadow-2xl"
+              />
+            )}
             <div className="text-center mt-4 text-white/80 font-serif tracking-wide">
               {items[selectedIndex].title}
             </div>

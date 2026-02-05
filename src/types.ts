@@ -69,4 +69,9 @@ export interface GalleryItem {
   url: string;
   title: string;
   albumId?: string;
+
+  // NEW: media support (images + videos)
+  mediaType?: 'image' | 'video';
+  mimeType?: string | null;
+  storagePath?: string | null;
 }

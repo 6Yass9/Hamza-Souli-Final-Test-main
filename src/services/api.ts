@@ -36,7 +36,12 @@ const mapGalleryItem = (row: any): GalleryItem => ({
   id: row.id,
   albumId: row.album_id,
   url: row.url,
-  title: row.title ?? ''
+  title: row.title ?? '',
+
+  // NEW (optional columns): supports images + videos
+  mediaType: (row.media_type as any) ?? 'image',
+  mimeType: row.mime_type ?? null,
+  storagePath: row.storage_path ?? null
 });
 
 const mapClientDocument = (row: any): ClientDocument => {
@@ -56,6 +61,46 @@ const mapClientDocument = (row: any): ClientDocument => {
 const generateError = (prefix: string, error: any) => {
   console.error(prefix, error);
   throw new Error(prefix);
+};
+
+// Uploads a File (image/video) to Supabase Storage and returns a public URL + metadata.
+// NOTE: Requires a Supabase Storage bucket named "media".
+const uploadMediaToStorage = async (
+  file: File,
+  folder: 'portfolio' | 'clients',
+  albumId: string
+): Promise<{ publicUrl: string; path: string; mimeType: string | null; mediaType: 'image' | 'video' }> => {
+  const bucket = 'media';
+
+  const ext = file.name.split('.').pop()?.toLowerCase() || 'bin';
+  const safeBase = file.name
+    .replace(/\.[^/.]+$/, '')
+    .replace(/[^a-zA-Z0-9-_]+/g, '-')
+    .slice(0, 60);
+  const unique = `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+  const path = `${folder}/${albumId}/${unique}-${safeBase}.${ext}`;
+
+  const { error: uploadError } = await supabase().storage.from(bucket).upload(path, file, {
+    cacheControl: '3600',
+    upsert: false,
+    contentType: file.type || undefined
+  });
+
+  if (uploadError) {
+    console.error('uploadMediaToStorage error', uploadError);
+    throw new Error(uploadError.message || 'Upload failed');
+  }
+
+  const { data } = supabase().storage.from(bucket).getPublicUrl(path);
+  const publicUrl = data.publicUrl;
+  const mediaType: 'image' | 'video' = file.type.startsWith('video/') ? 'video' : 'image';
+
+  return {
+    publicUrl,
+    path,
+    mimeType: file.type || null,
+    mediaType
+  };
 };
 
 export const api = {
@@ -537,13 +582,65 @@ export const api = {
     return (data as any[]).map(mapGalleryItem);
   },
 
+  // NEW: Upload images/videos to Supabase Storage bucket "media" and create a gallery item.
+  // - If album has client_id => stored under clients/<albumId>/...
+  // - Else => portfolio/<albumId>/...
+  addGalleryMediaFile: async (albumId: string, file: File, title?: string): Promise<GalleryItem> => {
+    const { data: album, error: albumErr } = await supabase()
+      .from('albums')
+      .select('id, client_id, cover_url')
+      .eq('id', albumId)
+      .single();
+
+    if (albumErr || !album) {
+      console.error('addGalleryMediaFile album lookup error', albumErr);
+      throw new Error('Album not found');
+    }
+
+    const folder: 'portfolio' | 'clients' = album.client_id ? 'clients' : 'portfolio';
+    const uploaded = await uploadMediaToStorage(file, folder, albumId);
+
+    const { data, error } = await supabase()
+      .from('gallery_items')
+      .insert({
+        album_id: albumId,
+        url: uploaded.publicUrl,
+        title: title ?? file.name.replace(/\.[^/.]+$/, ''),
+        media_type: uploaded.mediaType,
+        mime_type: uploaded.mimeType,
+        storage_path: uploaded.path
+      })
+      .select('*')
+      .single();
+
+    if (error || !data) generateError('Failed to add gallery item', error);
+
+    // Set album cover only if empty AND uploaded is an image (covers should be images)
+    if (!album.cover_url && uploaded.mediaType === 'image') {
+      await supabase().from('albums').update({ cover_url: uploaded.publicUrl }).eq('id', albumId);
+    }
+
+    return mapGalleryItem(data);
+  },
+
   addGalleryItem: async (albumId: string, url: string, title?: string): Promise<GalleryItem> => {
+    // Backward-compatible method: accepts a URL (or base64) and tries to infer media type from URL.
+    // Prefer addGalleryMediaFile for real file uploads.
+    const lower = (url || '').toLowerCase();
+    const looksLikeVideo =
+      lower.startsWith('data:video/') ||
+      /\.(mp4|webm|mov|m4v|avi)(\?|#|$)/.test(lower);
+    const inferredMediaType: 'image' | 'video' = looksLikeVideo ? 'video' : 'image';
+
     const { data, error } = await supabase()
       .from('gallery_items')
       .insert({
         album_id: albumId,
         url,
-        title: title ?? null
+        title: title ?? null,
+        media_type: inferredMediaType,
+        mime_type: null,
+        storage_path: null
       })
       .select('*')
       .single();
@@ -552,7 +649,7 @@ export const api = {
 
     const { data: album, error: albumError } = await supabase().from('albums').select('*').eq('id', albumId).maybeSingle();
 
-    if (!albumError && album && !album.cover_url) {
+    if (!albumError && album && !album.cover_url && inferredMediaType === 'image') {
       await supabase().from('albums').update({ cover_url: url }).eq('id', albumId);
     }
 

@@ -398,8 +398,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
 
     for (const file of files) {
       try {
-        const base64 = await convertFileToBase64(file);
-        await api.addGalleryItem(activeAlbum.id, base64, file.name.split('.')[0]);
+        // Upload to Supabase Storage (bucket: "media") and create gallery item
+        await api.addGalleryMediaFile(activeAlbum.id, file, file.name.split('.')[0]);
       } catch (err) {
         console.error('Failed to upload file', file.name, err);
       }
@@ -1141,7 +1141,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                   <input
                     type="file"
                     multiple
-                    accept="image/*"
+                    accept="image/*,video/*"
                     onChange={handleFileUpload}
                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                     disabled={uploading}
@@ -1200,7 +1200,17 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
               {galleryItems.map(item => (
                 <div key={item.id} className="group relative bg-white shadow-sm border border-stone-100 rounded overflow-hidden">
                   <div className="aspect-square bg-stone-200">
-                    <img src={item.url} alt={item.title} className="w-full h-full object-cover" />
+                    {item.mediaType === 'video' || (item.mimeType?.startsWith('video/') ?? false) ? (
+                      <video
+                        src={item.url}
+                        className="w-full h-full object-cover"
+                        muted
+                        playsInline
+                        preload="metadata"
+                      />
+                    ) : (
+                      <img src={item.url} alt={item.title} className="w-full h-full object-cover" />
+                    )}
                   </div>
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
                     <button onClick={() => handleDeletePhoto(item.id)} className="text-white hover:text-red-300 transition-colors">
